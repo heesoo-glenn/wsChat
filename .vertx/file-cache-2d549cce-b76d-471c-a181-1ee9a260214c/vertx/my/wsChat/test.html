@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+
+<script>
+	window.addEventListener('load',init);
+	function init(){
+		
+		ws = new WebSocket('ws://localhost:8888/chatWs','protocolOne');
+		//ws.send("message");
+		
+		ws.onmessage = function(event){
+			console.log(event.data);
+		}
+	};
+	
+	
+
+</script>
+
+<style>
+#chat-display { width:600px; height:800px; scroll:auto;}
+
+</style>
+</head>
+<body>
+	<p>Simple WebSocket Chat</p>
+	
+	<section>
+		<div id="chat-display"></div>
+		<div>
+			<textarea id="name" rows="1" cols="1"></textarea><textarea id="input" rows="2" cols="1"></textarea>
+		</div>
+	
+	</section>
+</body>
+</html>

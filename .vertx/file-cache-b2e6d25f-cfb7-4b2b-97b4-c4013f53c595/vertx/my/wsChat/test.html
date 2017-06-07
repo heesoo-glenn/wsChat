@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+
+<script>
+	window.addEventListener('load',init);
+	var app;
+	function init(){
+		app = app();
+	}
+	
+	function app(){
+	
+		var display = document.getElementById("chat-display");
+		var input = {
+				name : document.getElementById("name"),
+				input : document.getElementById("input")
+		}
+		
+
+		var ws = new WebSocket('ws://localhost:8888/chatWs');
+		ws.onopen = function(){
+			document.getElementById("ws-status").innerHTML = 'connected';
+		};
+		
+		ws.onmessage = function(event){
+			var recevievedMsg = JSON.parse(event.data);
+			
+			var name = recevievedMsg.name;
+			var text = recevievedMsg.text;
+			
+			var msgFromOthers = name + ' says : ' + text + '<br/>';
+			display.innerHTML = display.innerHTML + msgFromOthers ;
+		}
+
+		var app = {};
+		app.input = input;
+		app.display = display;
+		app.ws = ws;
+		app.sendText = function(){
+			var msg = {
+					type : 'message',
+					text : input.input.value,
+					name : input.name.value,
+					date: Date.now()
+				}
+				ws.send(JSON.stringify(msg));
+				input.input.value="";
+		};
+		
+		return app;
+	}
+
+
+
+</script>
+
+<style>
+#chat-display { width:400px; height:400px; scroll:auto; border:1px solid black;}
+#name {width:75px; margin-right:10px;}
+#input {width:255px;}
+#input-wrapper {margin-top:5px;}
+
+</style>
+</head>
+<body>
+	<p>Simple WebSocket Chat</p>
+	<p id="ws-status" style="font-size:0.8em;">disconnected</p>
+
+	<section>
+		<div id="chat-display"></div>
+		<div id="input-wrapper">
+			<input id="name" value="anonymous"/><textarea id="input" rows="2" cols="1"></textarea>
+			<button id="send" value="send" onclick="javascript:app.sendText();">send</button>
+		</div>
+	
+	</section>
+</body>
+</html>
